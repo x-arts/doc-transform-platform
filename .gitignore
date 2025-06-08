@@ -118,6 +118,8 @@ ipython_config.py
 .pdm-build/
 /app/output/
 /doc_cloud_store/
+/app/doc_cloud_store/
+/app/doc_local_store/
 
 # PEP 582; used by e.g. github.com/David-OConnor/pyflow and github.com/pdm-project/pdm
 __pypackages__/
