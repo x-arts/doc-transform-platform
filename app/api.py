@@ -1,6 +1,4 @@
 
-
-from fastapi.responses import FileResponse
 from fastapi import FastAPI, UploadFile, File, Body
 from pydantic import BaseModel
 import shutil
@@ -38,18 +36,46 @@ class FileTransformRequest(BaseModel):
     fileId: str
 @app.post("/api/file-transform/create-async")
 async def create_async_transform(request: FileTransformRequest):
+    task_id = str(uuid.uuid4())
     fileId = request.fileId
     print(fileId)
-    file_pah =  file_store.get_file_by_id(fileId)
+    file_pah = file_store.get_file_by_id(fileId)
     print(file_pah)
 
-    doc_convert.local_file_convert(file_pah, fileId)
+    # 返回文件的目录
+    output_dir = doc_convert.local_file_convert(file_pah, fileId)
 
+    print("output_dir" + output_dir)
+    # 从输出目录中查找 .md 文件
+    md_file = None
+    for file in os.listdir(output_dir):
+        if file.endswith('.md'):
+            md_file = os.path.join(output_dir, file)
+            break
+
+    if not md_file:
+        return {
+            "status": "error",
+            "fileId": request.fileId,
+            "message": "Markdown file not found in output directory"
+        }
+
+    # 上传 markdown 文件
+    markdown_file_id = file_store.upload_file(md_file)
+
+    print("markdown_file_id" + markdown_file_id)
+
+    message = {
+        "taskId": task_id,
+        "status": "success",
+        "fileId": markdown_file_id
+    }
+
+    message_push.push_task_message(message)
 
     return {
-        "status": "success",
-        "fileId": request.fileId,
-        "message": "File transform task created"
+        "status": "processing",
+        "taskId": task_id
     }
 
 

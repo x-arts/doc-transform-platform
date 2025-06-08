@@ -5,7 +5,7 @@ from pathlib import Path
 # 获取文件并保存到本地存储目录
 def get_file_by_id(file_id: str) -> str:
     # 创建存储目录
-    store_dir = Path("../doc_cloud_store")
+    store_dir = Path("doc_cloud_store")
     store_dir.mkdir(exist_ok=True)
 
     # 构建API URL（假设与当前服务在同一主机）
