@@ -1,13 +1,12 @@
-
 from fastapi import FastAPI, UploadFile, File, Body
 from pydantic import BaseModel
 import shutil
 import os
 import uuid
 import uvicorn
-import file_store
-import doc_convert
+import doc_convert_handle
 import message_push
+import asyncio
 
 
 app = FastAPI()
@@ -38,40 +37,9 @@ class FileTransformRequest(BaseModel):
 async def create_async_transform(request: FileTransformRequest):
     task_id = str(uuid.uuid4())
     fileId = request.fileId
-    print(fileId)
-    file_pah = file_store.get_file_by_id(fileId)
-    print(file_pah)
 
-    # 返回文件的目录
-    output_dir = doc_convert.local_file_convert(file_pah, fileId)
-
-    print("output_dir" + output_dir)
-    # 从输出目录中查找 .md 文件
-    md_file = None
-    for file in os.listdir(output_dir):
-        if file.endswith('.md'):
-            md_file = os.path.join(output_dir, file)
-            break
-
-    if not md_file:
-        return {
-            "status": "error",
-            "fileId": request.fileId,
-            "message": "Markdown file not found in output directory"
-        }
-
-    # 上传 markdown 文件
-    markdown_file_id = file_store.upload_file(md_file)
-
-    print("markdown_file_id" + markdown_file_id)
-
-    message = {
-        "taskId": task_id,
-        "status": "success",
-        "fileId": markdown_file_id
-    }
-
-    message_push.push_task_message(message)
+    # 在后台启动异步转换任务
+    asyncio.create_task(doc_convert_handle.convert_file_to_md(fileId, task_id))
 
     return {
         "status": "processing",
