@@ -7,13 +7,14 @@ import uvicorn
 import doc_convert_handle
 import message_push
 import asyncio
+import doc_convert
 
 
 app = FastAPI()
 
 # 用于存储文件ID和文件名的映射
 
-UPLOAD_DIR = "uploads"
+UPLOAD_DIR = "doc_local_store"
 
 @app.get("/")
 async def root():
@@ -47,31 +48,60 @@ async def create_async_transform(request: FileTransformRequest):
     }
 
 
-@app.post("/upload")
-async def upload_file(file: UploadFile = File(...)):
-    # 生成唯一的文件ID
-    file_id = str(uuid.uuid4())
+@app.post("/api/file-transform/create")
+async def file_transform(file: UploadFile = File(...)):
+    try:
+        # 生成唯一的文件ID
+        file_id = str(uuid.uuid4())
 
-    # 获取文件后缀名
-    _, file_extension = os.path.splitext(file.filename)
+        # 获取文件后缀名
+        _, file_extension = os.path.splitext(file.filename)
 
-    # 创建文件ID对应的目录
-    file_dir = os.path.join(UPLOAD_DIR, file_id)
-    os.makedirs(file_dir, exist_ok=True)
+        # 创建文件ID对应的目录
+        file_dir = os.path.join(UPLOAD_DIR, file_id)
+        os.makedirs(file_dir, exist_ok=True)
 
-    # 构建文件保存路径（使用原始文件名）
-    file_location = os.path.join(file_dir, file.filename)
+        # 构建文件保存路径（使用原始文件名）
+        file_location = os.path.join(file_dir, file.filename)
 
-    # 保存文件
-    with open(file_location, "wb+") as file_object:
-        shutil.copyfileobj(file.file, file_object)
+        # 保存文件
+        with open(file_location, "wb+") as file_object:
+            shutil.copyfileobj(file.file, file_object)
 
-    return {
-        "file_id": file_id,
-        "filename": file.filename,
-        "extension": file_extension
-    }
+        # 调用文档转换服务
+        output_dir = doc_convert.local_file_convert(file_location, file_id)
 
+        # 在输出目录中查找 markdown 文件
+        md_content = ""
+        for file_name in os.listdir(output_dir):
+            if file_name.endswith('.md'):
+                md_file_path = os.path.join(output_dir, file_name)
+                with open(md_file_path, 'r', encoding='utf-8') as md_file:
+                    md_content = md_file.read()
+                break
+
+        if not md_content:
+            return {
+                "status": "failed",
+                "message": "No markdown content generated"
+            }
+
+        print("md_content:", md_content)
+
+        return {
+            "status": "success",
+            "file_id": file_id,
+            "filename": file.filename,
+            "extension": file_extension,
+            "content": md_content
+        }
+
+    except Exception as e:
+        print(f"处理失败: {str(e)}")
+        return {
+            "status": "error",
+            "message": str(e)
+        }
 
 
 if __name__ == "__main__":
