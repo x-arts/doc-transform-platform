@@ -1,39 +1,33 @@
-from fastapi import FastAPI, UploadFile, File, Body
+from fastapi import FastAPI, UploadFile, File
 from pydantic import BaseModel
 import shutil
 import os
 import uuid
 import uvicorn
 import doc_convert_handle
-import message_push
 import asyncio
 import doc_convert
+from app.common.response import ResponseHandler
 
 
 app = FastAPI()
 
 # 用于存储文件ID和文件名的映射
-
 UPLOAD_DIR = "doc_local_store"
 
 @app.get("/")
 async def root():
-    return {"message": "Hello World"}
+    return ResponseHandler.success(message="Hello World")
 
 @app.get("/hello/{name}")
 async def say_hello(name: str):
-    message = {
-        "taskId": "123",
-        "status": "processing",
-        "fileId": "abc-xyz"
-    }
-    message_push.push_task_message(message)
 
-    return {"message": f"Hello {name}"}
+    return ResponseHandler.success({"message": f"Hello {name}"})
 
 
 class FileTransformRequest(BaseModel):
     fileId: str
+
 @app.post("/api/file-transform/create-async")
 async def create_async_transform(request: FileTransformRequest):
     task_id = str(uuid.uuid4())
@@ -42,10 +36,10 @@ async def create_async_transform(request: FileTransformRequest):
     # 在后台启动异步转换任务
     asyncio.create_task(doc_convert_handle.convert_file_to_md(fileId, task_id))
 
-    return {
+    return ResponseHandler.success({
         "status": "processing",
         "taskId": task_id
-    }
+    })
 
 
 @app.post("/api/file-transform/create")
@@ -81,27 +75,18 @@ async def file_transform(file: UploadFile = File(...)):
                 break
 
         if not md_content:
-            return {
-                "status": "failed",
-                "message": "No markdown content generated"
-            }
+            return ResponseHandler.failed("No markdown content generated")
 
-        print("md_content:", md_content)
-
-        return {
-            "status": "success",
+        return ResponseHandler.success({
             "file_id": file_id,
             "filename": file.filename,
             "extension": file_extension,
             "content": md_content
-        }
+        })
 
     except Exception as e:
         print(f"处理失败: {str(e)}")
-        return {
-            "status": "error",
-            "message": str(e)
-        }
+        return ResponseHandler.error(str(e))
 
 
 if __name__ == "__main__":
