@@ -1,15 +1,16 @@
 import requests
 from pathlib import Path
+from .config import config
 
 
-# 获取文件并保存到本地存储目录
 def get_file_by_id(file_id: str) -> str:
     # 创建存储目录
     store_dir = Path("doc_cloud_store")
     store_dir.mkdir(exist_ok=True)
 
-    # 构建API URL（假设与当前服务在同一主机）
-    api_url = f"http://localhost:8000/api/files/download/{file_id}"
+    # 从配置文件获取 API URL
+    file_service_config = config['FILE_SERVICE']
+    api_url = f"{file_service_config['BASE_URL']}{file_service_config['DOWNLOAD_ENDPOINT'].format(file_id=file_id)}"
 
     # 发送GET请求获取文件
     try:
@@ -44,10 +45,9 @@ def upload_file(file_path: str) -> str:
     :param file_path: 本地文件路径
     :return: 返回服务器端的文件ID
     """
-    # 构建上传API URL
-
-    print(file_path)
-    api_url = "http://localhost:8000/api/files/upload"
+    # 从配置文件获取上传 API URL
+    file_service_config = config['FILE_SERVICE']
+    api_url = f"{file_service_config['BASE_URL']}{file_service_config['UPLOAD_ENDPOINT']}"
 
     try:
         # 检查文件是否存在
@@ -70,7 +70,6 @@ def upload_file(file_path: str) -> str:
         # 解析响应获取文件ID
         result = response.json()
 
-        print(result)
         if 'fileId' not in result:
             raise Exception("上传响应中未包含fileId")
 

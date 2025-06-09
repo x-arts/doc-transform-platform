@@ -2,6 +2,7 @@ import json
 from typing import TypedDict, Optional
 import redis
 from redis.exceptions import AuthenticationError, ConnectionError
+from .config import config
 
 
 class TaskMessage(TypedDict):
@@ -15,19 +16,21 @@ class MessagePusher:
     FILE_TRANSFORM_TOPIC = 'FILE_TRANSFORM_TOPIC'
     _instance = None
 
-    def __init__(self, host='127.0.0.1', port=6379, db=0, password='123456'):
+    def __init__(self):
         """初始化 Redis 客户端"""
+        redis_config = config['REDIS']
         try:
             self.redis_client = redis.Redis(
-                host=host,
-                port=port,
-                db=db,
+                host=redis_config['HOST'],
+                port=redis_config['PORT'],
+                db=redis_config['DB'],
+                password=redis_config['PASSWORD'],
                 decode_responses=True,
                 socket_connect_timeout=5
             )
             # 测试连接
             self.redis_client.ping()
-            print(f"Redis 连接成功，host: {host}, port: {port}")
+            print(f"Redis 连接成功，host: {redis_config['HOST']}, port: {redis_config['PORT']}")
         except (AuthenticationError, ConnectionError) as e:
             print(f"Redis 连接失败: {str(e)}")
             raise
@@ -41,7 +44,7 @@ class MessagePusher:
 
     def push_task_message(self, message: TaskMessage) -> bool:
         """
-        推送任务状态消息到Redis
+        推送任务态消息到Redis
         :param message: 包含taskId、status和fileId的消息对象
         :return: 是否推送成功
         """
