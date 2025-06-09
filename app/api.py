@@ -4,9 +4,9 @@ import shutil
 import os
 import uuid
 import uvicorn
-import doc_convert_handle
 import asyncio
-import doc_convert
+from . import doc_convert_handle
+from . import doc_convert
 from app.common.response import ResponseHandler
 
 

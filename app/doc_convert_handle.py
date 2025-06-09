@@ -1,7 +1,7 @@
 import asyncio
-import file_store
-import doc_convert
-import message_push
+from . import file_store
+from . import doc_convert
+from . import message_push
 import os
 
 
