@@ -4,3 +4,4 @@ pydantic==2.11.5
 redis==6.2.0
 Requests==2.32.3
 uvicorn==0.34.3
+python-multipart==0.0.20
