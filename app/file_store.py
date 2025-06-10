@@ -42,7 +42,7 @@ def upload_file(file_path: str) -> str:
     """
     上传文件到服务器
     :param file_path: 本地文件路径
-    :return: 返回服务器端的文件ID
+    :return: 返回服务器端的���件ID
     """
     # 从配置文件获取上传 API URL
     # file_service_config = config['FILE_SERVICE']
@@ -70,10 +70,10 @@ def upload_file(file_path: str) -> str:
         # 解析响应获取文件ID
         result = response.json()
         print(result)
-        if 'fileId' not in result:
+        if not result.get('data') or 'fileId' not in result['data']:
             raise Exception("上传响应中未包含fileId")
 
-        return result['fileId']
+        return result['data']['fileId']
 
     except requests.RequestException as e:
         raise Exception(f"文件上传失败: {str(e)}")
