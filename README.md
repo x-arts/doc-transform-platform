@@ -21,6 +21,51 @@
    
 ```
 
+# 外部服务配置
+
+项目依赖外部服务的配置可以通过以下两种方式设置：
+
+## 1. 环境变量配置
+
+在启动项目前，可以通过设置以下环境变量来配置外部服务：
+
+### Redis 配置
+```bash
+export REDIS_HOST=127.0.0.1      # Redis 服务器地址
+export REDIS_PORT=6379           # Redis 端口
+export REDIS_DB=0               # Redis 数据库编号
+export REDIS_PASSWORD=123456     # Redis 密码
+```
+
+### 文件服务配置
+```bash
+export FILE_SERVICE_URL=http://localhost:8000    # 文件服务基础URL
+```
+
+## 2. 直接修改配置文件
+
+也可以直接修改 `app/config.py` 文件中的默认配置：
+
+```python
+config = {
+    # Redis 配置
+    'REDIS': {
+        'HOST': '127.0.0.1',     # Redis 服务器地址
+        'PORT': 6379,            # Redis 端口
+        'DB': 0,                # Redis 数据库编号
+        'PASSWORD': '123456',    # Redis 密码
+    },
+    
+    # 文件服务配置
+    'FILE_SERVICE': {
+        'BASE_URL': 'http://localhost:8000',   # 文件服务基础URL
+        'UPLOAD_ENDPOINT': '/api/files/upload',
+        'DOWNLOAD_ENDPOINT': '/api/files/download/{file_id}',
+    }
+}
+```
+
+注意：环境变量配置会覆盖配置文件中的默认值。
 
 # 接口说明
 ## API 接口文档
