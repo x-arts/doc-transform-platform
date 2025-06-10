@@ -65,10 +65,11 @@ def upload_file(file_path: str) -> str:
         # 发送POST请求上传文件
         response = requests.post(api_url, files=files)
         response.raise_for_status()
+        print("上传相应:", response)
 
         # 解析响应获取文件ID
         result = response.json()
-
+        print(result)
         if 'fileId' not in result:
             raise Exception("上传响应中未包含fileId")
 
