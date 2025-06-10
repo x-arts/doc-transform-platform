@@ -20,7 +20,7 @@ UPLOAD_DIR = "doc_local_store"
 async def root():
     return ResponseHandler.success(message="Hello World")
 
-@app.get("/pushMessage")
+@app.get("/pushMessage/{name}")
 async def say_hello(name: str):
     message_push.push_task_message({
         "taskId": "12345678",
