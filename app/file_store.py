@@ -1,6 +1,5 @@
 import requests
 from pathlib import Path
-from .config import config
 
 
 def get_file_by_id(file_id: str) -> str:
@@ -9,8 +8,8 @@ def get_file_by_id(file_id: str) -> str:
     store_dir.mkdir(exist_ok=True)
 
     # 从配置文件获取 API URL
-    file_service_config = config['FILE_SERVICE']
-    api_url = f"{file_service_config['BASE_URL']}{file_service_config['DOWNLOAD_ENDPOINT'].format(file_id=file_id)}"
+    # file_service_config = config['FILE_SERVICE']
+    api_url = f"http://47.119.16.20:8000/api/files/download/{file_id}"
 
     # 发送GET请求获取文件
     try:
@@ -46,8 +45,8 @@ def upload_file(file_path: str) -> str:
     :return: 返回服务器端的文件ID
     """
     # 从配置文件获取上传 API URL
-    file_service_config = config['FILE_SERVICE']
-    api_url = f"{file_service_config['BASE_URL']}{file_service_config['UPLOAD_ENDPOINT']}"
+    # file_service_config = config['FILE_SERVICE']
+    api_url = "http://47.119.16.20:8000/api/files/upload"
 
     try:
         # 检查文件是否存在
