@@ -2,7 +2,7 @@ import json
 from typing import TypedDict, Optional
 import redis
 from redis.exceptions import AuthenticationError, ConnectionError
-from .config import config
+import config
 
 
 class TaskMessage(TypedDict):

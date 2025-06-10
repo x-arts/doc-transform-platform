@@ -1,8 +1,7 @@
 import asyncio
-from . import file_store
-from . import doc_convert
-from . import message_push
 import os
+
+from app import message_push, file_store, doc_convert
 
 
 async def convert_file_to_md(file_id: str, task_id: str):

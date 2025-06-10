@@ -14,8 +14,12 @@
 ```
 3. 启动项目
 ```bash
-    uvicorn main:app --host 0.0.0.0 --port 8008 --reload
+    export PYTHONPATH=.
+    python app/main.py
     
+    或是：
+    export PYTHONPATH=.
+    uvicorn main:app --host 0.0.0.0 --port 8008 --reload
     或是后台命令：
     nohup uvicorn app.api:app --host 0.0.0.0 --port 8008 > output.log 2>&1 &
    

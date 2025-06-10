@@ -5,7 +5,7 @@ from typing import Dict, Any
 config: Dict[str, Any] = {
     # Redis 配置
     'REDIS': {
-        'HOST': os.getenv('REDIS_HOST', '127.0.0.1'),
+        'HOST': os.getenv('REDIS_HOST', '47.119.16.20'),
         'PORT': int(os.getenv('REDIS_PORT', 6379)),
         'DB': int(os.getenv('REDIS_DB', 0)),
         'PASSWORD': os.getenv('REDIS_PASSWORD', '123456'),

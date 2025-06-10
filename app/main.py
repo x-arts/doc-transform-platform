@@ -5,10 +5,11 @@ import os
 import uuid
 import uvicorn
 import asyncio
-from . import doc_convert_handle
-from . import doc_convert
-from app.common.response import ResponseHandler
+import message_push
+import doc_convert_handle
+import doc_convert
 
+from app.common.response import ResponseHandler
 
 app = FastAPI()
 
@@ -19,8 +20,13 @@ UPLOAD_DIR = "doc_local_store"
 async def root():
     return ResponseHandler.success(message="Hello World")
 
-@app.get("/hello/{name}")
+@app.get("/pushMessage")
 async def say_hello(name: str):
+    message_push.push_task_message({
+        "taskId": "12345678",
+        "status": "processing",
+        "fileId": "13123123"
+    })
 
     return ResponseHandler.success({"message": f"Hello {name}"})
 
