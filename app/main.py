@@ -99,7 +99,18 @@ async def file_transform(file: UploadFile = File(...)):
 
 
 @app.post("/api/file-transform/pdf/to/md/info")
-async def file_transform_info(request: FileTransformRequest):
+async def pdf_to_md_info(request: FileTransformRequest):
+    try:
+        fileId = request.fileId
+        minerURes: MinerUResultFile =  doc_convert_handle.convert_pdf_to_md_info(fileId)
+        return ResponseHandler.success(minerURes)
+    except Exception as e:
+        print(f"处理失败: {str(e)}")
+        return ResponseHandler.error(str(e))
+
+
+@app.post("/api/file-transform/word/to/pdf/info")
+async def word_to_pdf_info(request: FileTransformRequest):
     try:
         fileId = request.fileId
         minerURes: MinerUResultFile =  doc_convert_handle.convert_pdf_to_md_info(fileId)

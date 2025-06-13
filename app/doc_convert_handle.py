@@ -1,8 +1,32 @@
 import asyncio
 import os
 
-from app import message_push, file_store, doc_convert
-from app.view.miner_u_result_file import MinerUResultFile
+from app import message_push, file_store, doc_convert, docx_convert_pdf
+from app.view.miner_u_result_file import MinerUResultFile, SOfficeResultFile
+
+# 将 Word 文档转换为 PDF 并获取信息
+def convert_word_to_pdf_info(file_id: str) -> SOfficeResultFile:
+    # 下载好的文件路径
+    file_path = file_store.get_file_by_id(file_id)
+
+    # 转换文件的 out 目录
+    bool = docx_convert_pdf.convert_pdf(file_path)
+
+    output_dir = os.path.join(os.path.dirname(file_path), 'soffice', 'pdf')
+
+    # 获取原始文件名（不带后缀）
+    original_filename = os.path.splitext(os.path.basename(file_path))[0]
+    expected_pdf_name = original_filename + '.pdf'
+
+    sOfficeRes = SOfficeResultFile()
+
+    # 直接查找对应的PDF文件
+    pdf_file_path = os.path.join(output_dir, expected_pdf_name)
+    if os.path.exists(pdf_file_path):
+        pdf_file_id = file_store.upload_file(pdf_file_path)
+        sOfficeRes.pdf_file_id = pdf_file_id
+
+    return sOfficeRes
 
 
 #  pdf 转换为 markdown 并获取信息

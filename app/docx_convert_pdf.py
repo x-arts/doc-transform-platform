@@ -1,18 +1,20 @@
 import subprocess
 import os
 
-def convert_pdf(input_file: str, output_path: str) -> bool:
+def convert_pdf(input_file: str) -> bool:
     """
     将文档转换为PDF格式
 
     Args:
         input_file (str): 输入word文件的路径
-        output_path (str): PDF输出目录的路径
 
     Returns:
         bool: 转换成功返回True，失败返回False
     """
     try:
+        # 设置固定的输出目录路径
+        output_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'soffice', 'pdf')
+
         # 确保输出目录存在
         os.makedirs(output_path, exist_ok=True)
 
