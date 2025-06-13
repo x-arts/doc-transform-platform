@@ -2,9 +2,39 @@ import asyncio
 import os
 
 from app import message_push, file_store, doc_convert
+from app.view.miner_u_result_file import MinerUResultFile
 
 
-async def convert_file_to_md(file_id: str, task_id: str):
+#  pdf 转换为 markdown 并获取信息
+def convert_pdf_to_md_info(file_id: str) -> MinerUResultFile:
+    # 下载好的文件路径
+    file_path = file_store.get_file_by_id(file_id)
+
+    # 转换文件的 out 目录
+    output_dir = doc_convert.local_file_convert(file_path)
+
+    minerURes = MinerUResultFile()
+
+    for file_name in os.listdir(output_dir):
+        if file_name.endswith('.md'):
+            md_file_path = os.path.join(output_dir, file_name)
+            markdown_file_id = file_store.upload_file(md_file_path)
+            minerURes.md_file_id = markdown_file_id
+        if file_name.endswith('middle.json'):
+            middle_file_path = os.path.join(output_dir, file_name)
+            middle_file_id = file_store.upload_file(middle_file_path)
+            minerURes.middle_file_id = middle_file_id
+
+        if file_name.endswith('content_list.json'):
+            content_list_file_path = os.path.join(output_dir, file_name)
+            content_list_file_id = file_store.upload_file(content_list_file_path)
+            minerURes.content_list_file_id = content_list_file_id
+
+    return minerURes
+
+
+
+async def convert_pdf_to_md(file_id: str, task_id: str):
     """
     异步处理文件转换任务
     :param file_id: 原始文件ID
