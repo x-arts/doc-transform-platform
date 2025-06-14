@@ -47,7 +47,7 @@ def convert_pdf_to_md_info(file_id: str) -> MinerUResultFile:
     file_path = file_store.get_file_by_id(file_id)
 
     # 转换文件的 out 目录
-    output_dir = doc_convert.local_file_convert(file_path)
+    output_dir = doc_convert.local_file_convert(file_path,file_id)
 
     minerURes = MinerUResultFile()
 

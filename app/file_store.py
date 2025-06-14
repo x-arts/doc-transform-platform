@@ -1,5 +1,6 @@
 import requests
 from pathlib import Path
+import urllib.parse
 
 
 def get_file_by_id(file_id: str) -> str:
@@ -23,13 +24,20 @@ def get_file_by_id(file_id: str) -> str:
         response.raise_for_status()  # 检查响应状态
 
         # 从响应头获取文件名，如果没有则使用file_id作为文件名
-        filename = response.headers.get(
-            'content-disposition',
-            f'filename={file_id}'
-        ).split('filename=')[-1]
+        content_disposition = response.headers.get('content-disposition', f'filename={file_id}')
 
-        # 清理文件名中的双引号
-        filename = filename.replace('"', '')
+        # 处理 filename* 格式
+        if 'filename*=' in content_disposition:
+            filename = content_disposition.split("filename*=")[-1]
+            # 处理 UTF-8 编码的文件名
+            if filename.startswith("utf-8''"):
+                filename = filename[7:]  # 移除 utf-8'' 前缀
+            filename = urllib.parse.unquote(filename)
+        else:
+            # 处理普通 filename 格式
+            filename = content_disposition.split('filename=')[-1]
+            filename = filename.replace('"', '')
+            filename = urllib.parse.unquote(filename)
 
         # 构建保存路径
         file_path = store_dir / filename
