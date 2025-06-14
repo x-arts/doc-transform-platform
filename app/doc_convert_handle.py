@@ -9,19 +9,31 @@ def convert_word_to_pdf_info(file_id: str) -> SOfficeResultFile:
     # 下载好的文件路径
     file_path = file_store.get_file_by_id(file_id)
 
-    # 转换文件的 out 目录
+    print("file_path is", file_path)
+
+    # 转换文件
     bool = docx_convert_pdf.convert_pdf(file_path)
 
-    output_dir = os.path.join(os.path.dirname(file_path), 'soffice', 'pdf')
+    print("bool is", bool)
+
+    # 从根目录开始获取 output_dir
+    root_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    output_dir = os.path.join(root_dir, 'soffice', 'pdf')
+
+    print("output_dir is", output_dir)
 
     # 获取原始文件名（不带后缀）
     original_filename = os.path.splitext(os.path.basename(file_path))[0]
     expected_pdf_name = original_filename + '.pdf'
 
-    sOfficeRes = SOfficeResultFile()
+    print("expected_pdf_name is", expected_pdf_name)
 
     # 直接查找对应的PDF文件
     pdf_file_path = os.path.join(output_dir, expected_pdf_name)
+
+    print("pdf_file_path is", pdf_file_path)
+
+    sOfficeRes = SOfficeResultFile()
     if os.path.exists(pdf_file_path):
         pdf_file_id = file_store.upload_file(pdf_file_path)
         sOfficeRes.pdf_file_id = pdf_file_id

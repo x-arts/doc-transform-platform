@@ -7,13 +7,19 @@ def get_file_by_id(file_id: str) -> str:
     store_dir = Path("doc_cloud_store")
     store_dir.mkdir(exist_ok=True)
 
-    # 从配置文件获取 API URL
-    # file_service_config = config['FILE_SERVICE']
-    api_url = f"http://47.119.16.20:8000/api/files/download/{file_id}"
+    api_url = f"http://127.0.0.1:8000/api/files/download/{file_id}"
+    print(f"开始下载文件，URL: {api_url}")
 
     # 发送GET请求获取文件
     try:
         response = requests.get(api_url)
+
+        # 打印响应状态和内容以便调试
+        print(f"响应状态码: {response.status_code}")
+        print(f"响应头: {response.headers}")
+        if response.status_code != 200:
+            print(f"响应内容: {response.text}")
+
         response.raise_for_status()  # 检查响应状态
 
         # 从响应头获取文件名，如果没有则使用file_id作为文件名
@@ -35,7 +41,10 @@ def get_file_by_id(file_id: str) -> str:
         return str(file_path.absolute())
 
     except requests.RequestException as e:
-        raise Exception(f"获取文件失败: {str(e)}")
+        error_msg = f"获取文件失败: 状态码: {getattr(e.response, 'status_code', 'N/A')}, 错误信息: {str(e)}"
+        if hasattr(e, 'response') and e.response is not None:
+            error_msg += f", 响应内容: {e.response.text}"
+        raise Exception(error_msg)
 
 
 def upload_file(file_path: str) -> str:
@@ -46,7 +55,7 @@ def upload_file(file_path: str) -> str:
     """
     # 从配置文件获取上传 API URL
     # file_service_config = config['FILE_SERVICE']
-    api_url = "http://47.119.16.20:8000/api/files/upload"
+    api_url = "http://127.0.0.1:8000/api/files/upload"
 
     try:
         # 检查文件是否存在
@@ -81,4 +90,3 @@ def upload_file(file_path: str) -> str:
         # 确保文件被关闭
         if 'files' in locals() and 'file' in files:
             files['file'][1].close()
-

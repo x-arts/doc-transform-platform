@@ -97,10 +97,10 @@ async def file_transform(file: UploadFile = File(...)):
         return ResponseHandler.error(str(e))
 
 
-@app.post("/api/file-transform/pdf/to/md/info")
-async def pdf_to_md_info(request: FileTransformRequest):
+@app.get("/api/file-transform/pdf/to/md/info")
+async def pdf_to_md_info(fileId: str):
     try:
-        fileId = request.fileId
+        print("开始转换 PDF 到 Markdown, fileId:", fileId)
         minerURes: MinerUResultFile =  doc_convert_handle.convert_pdf_to_md_info(fileId)
         return ResponseHandler.success(minerURes)
     except Exception as e:
@@ -108,11 +108,11 @@ async def pdf_to_md_info(request: FileTransformRequest):
         return ResponseHandler.error(str(e))
 
 
-@app.post("/api/file-transform/word/to/pdf/info")
-async def word_to_pdf_info(request: FileTransformRequest):
+@app.get("/api/file-transform/word/to/pdf/info")
+async def word_to_pdf_info(fileId: str):
     try:
-        fileId = request.fileId
-        res: SOfficeResultFile =  doc_convert_handle.convert_word_to_pdf_info(fileId)
+        print("开始转换 Word 到 PDF, fileId:", fileId)
+        res: SOfficeResultFile = doc_convert_handle.convert_word_to_pdf_info(fileId)
         return ResponseHandler.success(res)
     except Exception as e:
         print(f"处理失败: {str(e)}")
@@ -121,5 +121,3 @@ async def word_to_pdf_info(request: FileTransformRequest):
 
 if __name__ == "__main__":
     uvicorn.run(app, host="0.0.0.0", port=8008)
-
-

@@ -15,6 +15,8 @@ def convert_pdf(input_file: str) -> bool:
         # 设置固定的输出目录路径
         output_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'soffice', 'pdf')
 
+        print("output_path is", output_path)
+
         # 确保输出目录存在
         os.makedirs(output_path, exist_ok=True)
 
