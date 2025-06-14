@@ -11,8 +11,7 @@ import doc_convert
 
 from app.common.response import ResponseHandler
 
-from app import file_store
-from app.view.miner_u_result_file import MinerUResultFile
+from app.view.miner_u_result_file import MinerUResultFile, SOfficeResultFile
 
 app = FastAPI()
 
@@ -113,8 +112,8 @@ async def pdf_to_md_info(request: FileTransformRequest):
 async def word_to_pdf_info(request: FileTransformRequest):
     try:
         fileId = request.fileId
-        minerURes: MinerUResultFile =  doc_convert_handle.convert_pdf_to_md_info(fileId)
-        return ResponseHandler.success(minerURes)
+        res: SOfficeResultFile =  doc_convert_handle.convert_word_to_pdf_info(fileId)
+        return ResponseHandler.success(res)
     except Exception as e:
         print(f"处理失败: {str(e)}")
         return ResponseHandler.error(str(e))
