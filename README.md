@@ -17,6 +17,8 @@
     export PYTHONPATH=.
     python app/main.py
     
+    nohup  python app/main.py > output.log 2>&1 &
+    
     或是：
     export PYTHONPATH=.
     uvicorn main:app --host 0.0.0.0 --port 8008 --reload
