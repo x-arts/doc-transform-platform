@@ -2,13 +2,16 @@ import requests
 from pathlib import Path
 import urllib.parse
 
+# API服务器地址配置
+API_HOST = "http://127.0.0.1:8000"
+
 
 def get_file_by_id(file_id: str) -> str:
     # 创建存储目录
     store_dir = Path("doc_cloud_store")
     store_dir.mkdir(exist_ok=True)
 
-    api_url = f"http://127.0.0.1:8000/api/files/download/{file_id}"
+    api_url = f"{API_HOST}/api/files/download/{file_id}"
     print(f"开始下载文件，URL: {api_url}")
 
     # 发送GET请求获取文件
@@ -59,11 +62,9 @@ def upload_file(file_path: str) -> str:
     """
     上传文件到服务器
     :param file_path: 本地文件路径
-    :return: 返回服务器端的���件ID
+    :return: 返回服务器端的文件ID
     """
-    # 从配置文件获取上传 API URL
-    # file_service_config = config['FILE_SERVICE']
-    api_url = "http://127.0.0.1:8000/api/files/upload"
+    api_url = f"{API_HOST}/api/files/upload"
 
     try:
         # 检查文件是否存在
