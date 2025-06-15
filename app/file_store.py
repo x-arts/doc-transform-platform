@@ -3,7 +3,7 @@ from pathlib import Path
 import urllib.parse
 
 # API服务器地址配置
-API_HOST = "http://127.0.0.1:8000"
+API_HOST = "http://139.9.78.30:8000"
 # API_HOST = "http://47.119.16.20:8000"
 
 
