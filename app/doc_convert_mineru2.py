@@ -77,9 +77,6 @@ def api_parse_document(file_path):
         if response.status_code == 200:
             result = response.json()
             #  middle_json  md_content   content_list
-
-            print(f"请求成功  result: {result}")
-            print(f"请求成功  result-middle_json: {result['results']['1']['middle_json']}")
             return result
         else:
             print(f"请求失败: {response.status_code}")
@@ -96,6 +93,8 @@ def local_file_convert(file_path: str, uuid: str = "") -> str:
     pdf_file_name = file_path
     name_without_suff = Path(pdf_file_name).stem  # 使用 Path 来更安全地获取文件名
 
+    print("name_without_suff = " + name_without_suff)
+
     # prepare env
     output_dir = base_dir / "output"
     if uuid:
@@ -111,15 +110,12 @@ def local_file_convert(file_path: str, uuid: str = "") -> str:
     print(f"输出目录: {output_dir}")
     print(f"图片目录: {local_image_dir}")
 
-    image_writer = FileBasedDataWriter(str(local_image_dir))
-    md_writer = FileBasedDataWriter(str(local_md_dir))
-
     parse_result = api_parse_document(file_path)
-    middle_json_str  = parse_result['results']['1']['middle_json']
+    middle_json_str  = parse_result['results'][name_without_suff]['middle_json']
 
-    md_content_str = parse_result['results']['1']['md_content']
+    md_content_str = parse_result['results'][name_without_suff]['md_content']
 
-    content_list_str = parse_result['results']['1']['content_list']
+    content_list_str = parse_result['results'][name_without_suff]['content_list']
 
     # 使用新的函数保存文件内容
     middle_json_file_path = output_dir / f"{name_without_suff}_middle.json"
@@ -132,5 +128,5 @@ def local_file_convert(file_path: str, uuid: str = "") -> str:
     save_content_to_file(content_list_str, content_list_file_path, "content_list")
 
     # 返回输出目录的绝对路径
-    return str(output_dir.absolute())
+    return str(output_dir.absolute() / "vlm")
 
