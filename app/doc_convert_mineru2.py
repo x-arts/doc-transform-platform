@@ -128,5 +128,5 @@ def local_file_convert(file_path: str, uuid: str = "") -> str:
     save_content_to_file(content_list_str, content_list_file_path, "content_list")
 
     # 返回输出目录的绝对路径
-    return str(output_dir.absolute() / "vlm")
+    return str(output_dir.absolute())
 
