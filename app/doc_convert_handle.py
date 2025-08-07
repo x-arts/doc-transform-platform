@@ -1,7 +1,7 @@
 import asyncio
 import os
 
-from app import message_push, file_store, doc_convert, docx_convert_pdf
+from app import message_push, file_store, doc_convert_mineru2, docx_convert_pdf
 from app.view.miner_u_result_file import MinerUResultFile, SOfficeResultFile
 
 # 将 Word 文档转换为 PDF 并获取信息
@@ -47,7 +47,7 @@ def convert_pdf_to_md_info(file_id: str) -> MinerUResultFile:
     file_path = file_store.get_file_by_id(file_id)
 
     # 转换文件的 out 目录
-    output_dir = doc_convert.local_file_convert(file_path,file_id)
+    output_dir = doc_convert_mineru2.local_file_convert(file_path,file_id)
 
     minerURes = MinerUResultFile()
 
@@ -91,7 +91,7 @@ async def convert_pdf_to_md(file_id: str, task_id: str):
         file_path = await loop.run_in_executor(None, file_store.get_file_by_id, file_id)
 
         # 转换文件
-        output_dir = await loop.run_in_executor(None, doc_convert.local_file_convert, file_path, task_id)
+        output_dir = await loop.run_in_executor(None, doc_convert_mineru2.local_file_convert, file_path, task_id)
 
         # 查找生成的 markdown 文件
         md_file = None
