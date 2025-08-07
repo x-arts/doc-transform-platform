@@ -22,21 +22,19 @@ def api_parse_document(file_path,uuid: str = ""):
     with open(file_path, 'rb') as f:
         files = {'files': (file_path, f, 'application/pdf')}
 
-        # 准备参数
+        # 请求参数
         data = {
-            'output_dir': './output',
+            'output_dir': '/root/autodl-tmp/api-out-file/',
             'lang_list': ['ch'],  # 中文
-            'backend': 'pipeline',
+            'backend': 'vlm-sglang-engine',
             'parse_method': 'auto',
             'formula_enable': True,
-            'table_enable': True,
+            'table_enable': False,
             'return_md': True,
-            'return_middle_json': False,
-            'return_model_output': False,
-            'return_content_list': False,
-            'return_images': False,
-            'start_page_id': 0,
-            'end_page_id': 99999
+            'return_middle_json': True,
+            'return_model_output': True,
+            'return_content_list': True,
+            'return_images': False
         }
 
         # 发送请求
@@ -44,6 +42,10 @@ def api_parse_document(file_path,uuid: str = ""):
 
         if response.status_code == 200:
             result = response.json()
+            #  middle_json  md_content   content_list
+
+            print(f"请求成功  result: {result}")
+            print(f"请求成功  result-middle_json: {result['results']['1']['middle_json']}")
             return result
         else:
             print(f"请求失败: {response.status_code}")
