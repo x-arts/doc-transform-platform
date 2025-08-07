@@ -6,7 +6,7 @@ from magic_pdf.data.data_reader_writer import FileBasedDataWriter
 import requests
 
 
-API_HOST = "http://127.0.0.1:8008"
+API_HOST = "http://127.0.0.1:8007"
 
 
 def save_content_to_file(content: str, file_path: Path, content_type: str = ""):
