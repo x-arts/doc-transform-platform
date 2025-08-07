@@ -60,10 +60,10 @@ def api_parse_document(file_path):
         data = {
             'output_dir': '/root/autodl-tmp/api-out-file/',
             'lang_list': ['ch'],  # 中文
-            'backend': 'vlm-sglang-engine',
-            'parse_method': 'auto',
+            'backend': 'vlm-transformers',
+            'parse_method': 'ocr',
             'formula_enable': True,
-            'table_enable': False,
+            'table_enable': True,
             'return_md': True,
             'return_middle_json': True,
             'return_model_output': True,
