@@ -52,6 +52,8 @@ def api_parse_document(file_path):
 
     url = f"{API_HOST}/file_parse"
 
+    backend_mode = os.getenv("mineru_backend", "vlm-sglang-engine")
+
     # 准备文件
     with open(file_path, 'rb') as f:
         files = {'files': (file_path, f, 'application/pdf')}
@@ -60,7 +62,7 @@ def api_parse_document(file_path):
         data = {
             'output_dir': '/root/autodl-tmp/api-out-file/',
             'lang_list': ['ch'],  # 中文
-            'backend': 'vlm-sglang-engine',
+            'backend': backend_mode,
             'parse_method': 'ocr',
             'formula_enable': True,
             'table_enable': True,
